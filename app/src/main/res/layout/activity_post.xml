@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Post">
+
+    <include
+        android:id="@+id/post_page_toolbar"
+        layout="@layout/navigation_action" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/post_page_toolbar"
+        android:layout_marginTop="0dp">
+
+        <ImageButton
+            android:id="@+id/post_image_button"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/select_image"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="131dp" />
+
+        <EditText
+            android:id="@+id/post_description_text"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/post_image_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_login"
+            android:ems="10"
+            android:hint="Write something about this picture"
+            android:inputType="textMultiLine"
+            android:padding="10dp"
+            android:textSize="17sp"
+            android:textColor="@color/backgroundcolor"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="479dp" />
+
+        <Button
+            android:id="@+id/post_button"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_below="@+id/post_description_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/backgroundlgn"
+            android:text="Post"
+            android:textColor="@color/backgroundcolor"
+            android:textSize="18sp"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="105dp"
+            tools:layout_editor_absoluteY="558dp" />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

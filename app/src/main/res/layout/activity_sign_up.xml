@@ -1,0 +1,135 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/myrl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="50dp"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    android:paddingTop="50dp"
+    tools:context=".Login">
+
+
+    <RelativeLayout
+        android:id="@+id/reglayout"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/backgroundlgn">
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="19dp"
+            android:gravity="center"
+            android:text="Sign Up"
+            android:textColor="#fff"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:drawableLeft="@drawable/ic_email_black_24dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="73dp"
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:textColorHint="#fff" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:drawableLeft="@drawable/ic_lock_black_24dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="125dp"
+            android:ems="10"
+            android:hint="Password"
+            android:textColorHint="#fff"
+            android:inputType="textPassword"/>
+
+        <EditText
+            android:id="@+id/etconfirmPassword"
+            android:drawableLeft="@drawable/ic_lock_black_24dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="170dp"
+            android:ems="10"
+            android:hint=" ConfirmPassword"
+            android:textColorHint="#fff"
+            android:inputType="textPassword"/>
+
+
+    </RelativeLayout>
+
+
+
+
+    <Button
+        android:id="@+id/btreg"
+        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reglayout"
+        android:layout_marginStart="46dp"
+        android:layout_marginLeft="46dp"
+        android:layout_marginTop="50dp"
+        android:onClick="Onregister"
+        android:autoText="true"
+        android:background="@drawable/backgroundlgn"
+        android:text="Register"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/backgroundcolor"
+        tools:autoText="true" />
+
+    <Button
+        android:id="@+id/btLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btreg"
+        android:layout_marginLeft="46dp"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/backgroundlgn"
+        android:onClick="Onlogin"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/backgroundcolor"
+        android:text="Login"
+   />
+
+
+
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="52dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="2dp"
+        android:layout_x="65dp"
+        android:layout_y="24dp"
+        android:indeterminate="true"
+        android:progressDrawable="@drawable/circle_progress_view"
+        android:theme="@style/ProgressTheme" />
+
+
+</RelativeLayout>

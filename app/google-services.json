@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "84544936909",
+    "firebase_url": "https://maji-10d28.firebaseio.com",
+    "project_id": "maji-10d28",
+    "storage_bucket": "maji-10d28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84544936909:android:35ddf6b1fdeb0746",
+        "android_client_info": {
+          "package_name": "com.example.majiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84544936909-g12a7ile7bsma6jrnnng42oamrqb89gn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.majiapp",
+            "certificate_hash": "0f6ca34cbe409fd037580db5a32bb180c5795c9b"
+          }
+        },
+        {
+          "client_id": "84544936909-h1s3dmqv1lbeik3be34p5fpdktrpbi0s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB05YPVEevXH2qDqwAmktuTz7EJLLr-7Pk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84544936909-h1s3dmqv1lbeik3be34p5fpdktrpbi0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
