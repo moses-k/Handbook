@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,17 +53,20 @@ public class SetupActivity extends AppCompatActivity {
     //private StorageReference mStorageReference;
     private double mPhotoUploadProgress = 0;
     private Uri resultUri;
-    private String saveCurrentDate, saveCurrentTime, postRandomName, current_user_id;
+    private String saveCurrentDate, saveCurrentTime, postRandomName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+
         //create profile images folder in the storage
         userProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
         //mStorageReference = FirebaseStorage.getInstance().getReference();
@@ -119,6 +123,24 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            sendUserToLoginActivity();
+
+        }
+
+    }
+
+    private void sendUserToLoginActivity()
+    {
+        Intent loginIntent = new Intent(SetupActivity.this, Login.class);
+        startActivity(loginIntent);
+    }
 
     // allow to save picked photo from the gallary
     @Override
@@ -210,7 +232,6 @@ public class SetupActivity extends AppCompatActivity {
                             {
                                 if (task.isSuccessful())
                                 {
-
                                     //get the link
                                     downloadImageUrl = task.getResult().toString();
                                     addLinkToFirebaseDatabase();

@@ -51,6 +51,10 @@ public class Post extends AppCompatActivity {
     private DatabaseReference userRef,PostsRef;
     private FirebaseAuth mAuth;
 
+    private long countPosts;
+
+
+
 
 
 
@@ -130,7 +134,7 @@ public class Post extends AppCompatActivity {
         saveCurrentDate = currentDate.format(calFordDate.getTime());
 
         Calendar calFordTime = Calendar.getInstance();
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm aa");
         saveCurrentTime = currentTime.format(calFordTime.getTime());
 
         postRandomName= saveCurrentDate+saveCurrentTime;
@@ -186,6 +190,30 @@ public class Post extends AppCompatActivity {
 
     private void savePostImageToFirebaseDatabase()
     {
+
+
+        PostsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    //count the number of posts and store it in the variable created
+                    countPosts = dataSnapshot.getChildrenCount();
+                }
+                else
+                {
+                    countPosts = 0;
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         userRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
@@ -193,7 +221,7 @@ public class Post extends AppCompatActivity {
                 if(dataSnapshot.exists())
                 {
                     //get current username and profile for the current user loged in
-                    String userfullname  = dataSnapshot.child("Fullname").getValue().toString();
+                    String userfullname  = dataSnapshot.child("fullname").getValue().toString();
                     String userProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     String Description = PostDescription.getText().toString();
 
@@ -206,6 +234,9 @@ public class Post extends AppCompatActivity {
                     postMap.put("postimage", downloadUrl);
                     postMap.put("profileimage", userProfileImage);
                     postMap.put("userfullname", userfullname);
+                    postMap.put("counter", countPosts);
+
+
 
                     PostsRef.child(userfullname + current_user_id + postRandomName).updateChildren(postMap).addOnCompleteListener(new OnCompleteListener() {
                         @Override
@@ -248,20 +279,6 @@ public class Post extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        int id = item.getItemId();
-        if(id == android.R.id.home){
-            sendUserToDashboardActivity();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void sendUserToDashboardActivity() {
-        Intent homeIntent = new Intent(this,dashboard.class);
-        startActivity(homeIntent);
-    }
 
 
     private void openGallery() {

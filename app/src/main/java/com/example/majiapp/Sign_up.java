@@ -138,7 +138,8 @@ public class Sign_up extends AppCompatActivity implements View.OnClickListener {
                             @Override
                             public void onComplete(@NonNull Task <AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    GoToLogin();
+                                   // SendEmailVerificationMessage();
+                                    sendUserToSetupActivity();
                                     Toast.makeText(getApplicationContext(), "User registered successfull", Toast.LENGTH_SHORT).show();
                                     loadingBar.dismiss();
                                 } else {
@@ -151,6 +152,45 @@ public class Sign_up extends AppCompatActivity implements View.OnClickListener {
 
                  }
         }
+
+    private void sendUserToSetupActivity() {
+        Intent setupIntent = new Intent(this, SetupActivity.class);
+        startActivity(setupIntent);
+    }
+
+    //send email verification code
+
+    private void SendEmailVerificationMessage()
+    {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if(user !=null)
+        {
+              user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener <Void>() {
+                  @Override
+                  public void onComplete(@NonNull Task <Void> task)
+                  {
+
+                      if(task.isSuccessful())
+                      {
+                          Toast.makeText(Sign_up.this,"Regitration successfull, we've send you a mail. Please check and verify youre Account",Toast.LENGTH_SHORT).show();
+                          GoToLogin();
+                          mAuth.signOut();
+                      }
+                      else
+                      {
+                          String error = task.getException().getMessage();
+                          Toast.makeText(Sign_up.this,"Error ocured: " + error,Toast.LENGTH_SHORT).show();
+                          mAuth.signOut();
+
+                      }
+                  }
+              });
+
+        }
+
+
+    }
 
     private void GoToLogin() {
         startActivity(new Intent(this, Login.class));

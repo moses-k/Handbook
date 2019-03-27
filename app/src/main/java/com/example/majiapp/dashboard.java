@@ -28,7 +28,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,9 +36,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class dashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -53,12 +58,12 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
     private RecyclerView postList;
     private WebView webView;
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef, postsRef;
+    private DatabaseReference UserRef, postsRef,LikesRef;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private CircleImageView NavProfileImage;
-    String currentUserID;
+   public String currentUserID;
     private View navView;
-
+    private Boolean LikeCheker = false;
 
     //private ActionBar actionBar;
     private ActionBar actionbar;
@@ -69,6 +74,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
         mAuth = FirebaseAuth.getInstance();
         UserRef  = FirebaseDatabase.getInstance().getReference().child("Users");
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        LikesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         currentUserID = mAuth.getCurrentUser().getUid();
 
         postList = (RecyclerView) findViewById(R.id.all_users_post_view);
@@ -81,12 +87,9 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
        postList.setLayoutManager(linearLayoutManager);
        Add_post_Button = (Button) findViewById(R.id.post_button);
 
-
-      //  View navView = navigationView.inflateHeaderView(R.layout.header);
-      //  navView.findViewById(R.id.naigation_view);
-
-
-//app:headerLayout="@layout/header"
+       //  View navView = navigationView.inflateHeaderView(R.layout.header);
+       //  navView.findViewById(R.id.naigation_view);
+       //app:headerLayout="@layout/header"
 
         mToolbar = (Toolbar) findViewById(R.id.nav_actionbar);
         setSupportActionBar(mToolbar);
@@ -95,7 +98,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-       mDrawerLayout.addDrawerListener(mToggle);
+        mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         //display the supportActionBar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -108,32 +111,27 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
 
         //add onclick listener
         navigationView.setNavigationItemSelectedListener(this);
-
+        DisplAllUsersPost();
 
         //Load home fragment on the empty containeri dashboaed
       //  HomeFragment homeFragment= new HomeFragment();
       //  FragmentManager manager = getSupportFragmentManager();
        // manager.beginTransaction().replace(R.id.container,homeFragment,homeFragment.getTag()).commit();
-
-
-
         //load profile IMAGE and USERNAME on the navigation drawer
-       UserRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+
+     UserRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 if(dataSnapshot.exists())
                 {
-
-                    if(dataSnapshot.hasChild("Fullname"))
+                    if(dataSnapshot.hasChild("fullname"))
                     {
-                        String fullname = dataSnapshot.child("Fullname").getValue().toString();
+                        String fullname = dataSnapshot.child("fullname").getValue().toString();
                          navusername.setText(fullname);
-
                     }else
                     {
                         Toast.makeText(dashboard.this, "User has no username in the database",Toast.LENGTH_SHORT).show();
-
                     }
 
                     if(dataSnapshot.hasChild("profileimage"))
@@ -146,10 +144,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                         Toast.makeText(dashboard.this, "Profile name do not exist",Toast.LENGTH_SHORT).show();
 
                     }
-
-
                 }
-
             }
 //
             @Override
@@ -161,32 +156,111 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
         });
 
 
-      /* Add_post_Button.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
+  }
 
-               SendUsersToPostActivity();
-           }
-       });
+    //check if user is authenticated
 
-       */
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null)
+        {
+            sendUserToLoginActivity();
 
+        } else {
+            updateUserStatus("online");
 
+            checkUserExistence();
+            //DisplAllUsersPost();
+        }
+    }
+
+    //if user quite the app
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        updateUserStatus("offline");
+
+    }
+    //if app crashes
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        updateUserStatus("offline");
 
     }
 
-    private void SendUsersToPostActivity() {
 
+
+
+
+    //check user existance in the realtime dbase
+    private void checkUserExistence()
+    {
+       // final  String current_user_id = mAuth.getCurrentUser().getUid();
+
+       UserRef.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot)
+            {
+                if(!dataSnapshot.hasChild(currentUserID))
+                {
+                    sendUserToSetupActivity();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+                Toast.makeText(getApplicationContext(),"Database........... Error ocured",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    //show online status
+    public void  updateUserStatus(String state)
+    {
+        String saveCurrentDate, saveCurrentTime;
+
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd YYYY");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
+
+        Calendar calForTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+        saveCurrentTime = currentTime.format(calForTime.getTime());
+
+        //save this info to the database
+        Map currentstateMap = new HashMap();
+        currentstateMap.put("time", saveCurrentTime);
+        currentstateMap.put("date", saveCurrentDate);
+        currentstateMap.put("type", state);
+
+        UserRef.child(currentUserID).child("userState").updateChildren(currentstateMap);
+    }
+
+
+
+
+    //display all posts
     private void DisplAllUsersPost()
     {
+        //updateUserStatus("online");
+
+        Query SortPostsInDecendingOrder = postsRef.orderByChild("counter");
+
         //with the help of firebase recycler we will retrieve all the post
-//Posts.class, all_post_layout,PostViewHolder.class,postsRef
         FirebaseRecyclerOptions<Posts> options =
                 new FirebaseRecyclerOptions.Builder<Posts >()
-                        .setQuery(postsRef,Posts.class)
+                        .setQuery(SortPostsInDecendingOrder,Posts.class)
                         .build();
 
         FirebaseRecyclerAdapter<Posts, PostViewHolder> firebaseRecyclerAdapter =
@@ -205,6 +279,8 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                         holder.setProfileimage(getApplicationContext(),model.getProfileimage());
                         holder.setPostimage(getApplicationContext(), model.getPostimage());
 
+                        holder.setLikeButtonStatus(Postkey);
+
                         //when post is clicked take the user to the click activity together with the postkey
                         holder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -216,7 +292,50 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                             }
                         });
 
+                        holder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                Intent commentsIntent = new Intent(dashboard.this, CommentsActivity.class);
+                                commentsIntent.putExtra("Postkey", Postkey);
+                                startActivity(commentsIntent);
+                            }
+                        });
+                        //START OF LIKE POST
+                        //listener for the onlike button
+                        holder.LikePostButton.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                LikeCheker = true;
+                                LikesRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                    {
+                                        if(LikeCheker.equals(true))
+                                        {
+                                            if(dataSnapshot.child(Postkey).hasChild(currentUserID))
+                                            {
+                                                LikesRef.child(Postkey).child(currentUserID).removeValue();
+                                                LikeCheker = false;
+                                            }else
+                                            {
+                                                LikesRef.child(Postkey).child(currentUserID).setValue(true);
+                                                LikeCheker = false;
+                                            }
+                                        }
+                                    }
 
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError)
+                                    {
+
+                                    }
+                                });
+                            }
+                        });
+                        //END OF LIKE POST
                     }
 
                     @NonNull
@@ -227,12 +346,10 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                         return viewHolder;
                     }
                 };
-
-
                      // postList.setAdapter(firebaseRecyclerAdapter);
         postList.setAdapter(firebaseRecyclerAdapter);
            firebaseRecyclerAdapter.startListening();
-
+           updateUserStatus("online");
     }
 
      public static class PostViewHolder extends RecyclerView.ViewHolder
@@ -240,22 +357,22 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
 
         private ImageButton LikePostButton, CommentPostButton;
          private TextView DisplayNoOfLikes;
-
-        //TextView username, postTime,postDate,postDescription,Postimage;
-       // CircleImageView profileImage;
-
+         private DatabaseReference likeRef;
+         int countLikes;
+        String currentuserId;
 
         View mView;
 
          public PostViewHolder(View itemView) {
              super(itemView);
              mView = itemView;
+             likeRef = FirebaseDatabase.getInstance().getReference().child("Likes");
 
-             LikePostButton= (ImageButton) mView.findViewById(R.id.like_button);
+             currentuserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+             LikePostButton = (ImageButton) mView.findViewById(R.id.like_button);
              CommentPostButton = (ImageButton) mView.findViewById(R.id.comment_button);
              DisplayNoOfLikes = (TextView) mView.findViewById(R.id.display_numberof_likes);
-
-             /*  username = (TextView) mView.findViewById(R.id.post_username);
+/* username = (TextView) mView.findViewById(R.id.post_username);
                profileImage = (CircleImageView) mView.findViewById(R.id.post_profile_image);
              postTime = (TextView) mView.findViewById(R.id.post_time);
              postDate = (TextView) mView.findViewById(R.id.post_date);
@@ -263,6 +380,34 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
              Postimage = (ImageView) mView.findViewById(R.id.post_image);*/
          }
 
+         public void setLikeButtonStatus(final String PostKey)
+         {
+             likeRef.addValueEventListener(new ValueEventListener() {
+                 @Override
+                 public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                 {
+                     if(dataSnapshot.child(PostKey).hasChild(currentuserId))
+                     {
+                         //COUNTS THE number of likes
+                         countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                         LikePostButton.setImageResource(R.drawable.like);
+                         DisplayNoOfLikes.setText((Integer.toString(countLikes)) + (" Likes"));
+                     }
+                     else
+                     {
+                         countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                         LikePostButton.setImageResource(R.drawable.dislike);
+                         DisplayNoOfLikes.setText((Integer.toString(countLikes)) + (" Likes"));
+                     }
+                 }
+
+                 @Override
+                 public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                 }
+             });
+
+         }
 
          //access our all_post_layout in the view
          public void setFullname(String userfullname)
@@ -276,7 +421,6 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
              CircleImageView image = (CircleImageView) mView.findViewById(R.id.post_profile_image);
 
                      Picasso.get().load(profileimage).into(image);
-
          }
          public void setTime(String time)
          {
@@ -295,35 +439,15 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
              postDescription.setText(description);
          }
 
-
          public void setPostimage(Context ctx, String postimage)
          {
              ImageView Postimage = (ImageView) mView.findViewById(R.id.click_post_image);
 
              Picasso.get().load(postimage).into(Postimage);
          }
-
      }
 
 
-    //check if user is authenticated
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null) {
-            sendUserToLoginActivity();
-
-        } else {
-
-            checkUserExistence();
-
-        }
-        DisplAllUsersPost();
-
-    }
 
 
     private void sendUserToLoginActivity() {
@@ -331,41 +455,10 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
     }
 
 
-    //check user existance in the realtime dbase
-    private void checkUserExistence()
-    {
-       final  String current_user_id = mAuth.getCurrentUser().getUid();
-
-        UserRef.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange( DataSnapshot dataSnapshot)
-            {
-                if(!dataSnapshot.hasChild(current_user_id))
-                {
-                    sendUserToSetupActivity();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-                Toast.makeText(getApplicationContext(),"Database........... Error ocured",Toast.LENGTH_SHORT).show();
-
-
-            }
-        });
-
-    }
-
     private void sendUserToSetupActivity()
     {
         startActivity(new Intent(this,SetupActivity.class));
-
     }
-
-
 
     //allow mtoogle to display the drawer
     @Override
@@ -417,9 +510,6 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
         return builder;
     }
 
-
-
-
     //drwer item selected
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -432,19 +522,24 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                         new HomeFragment()).commit();
                 break;
             case R.id.nav_profile:
-                startActivity(new Intent(this,ProfileActivity.class));
+                SendUserToProfileActivity();
                 break;
             case R.id.nav_friends:
-                getSupportFragmentManager().beginTransaction().replace(R.id.container,
-                        new NotificationFragment()).commit();
+
+                SendUsersToFriendsActivity();
+
                 break;
             case R.id.nav_settings:
-                Intent settingIntent = new Intent(dashboard.this,SettingsActivity.class);
-                startActivity(settingIntent);
+                SendUserToSettingsActivity();
+
                 break;
             case R.id.nav_find_friends:
-                Intent find_friendsIntent = new Intent(dashboard.this,Find_friendsActivity.class);
-                startActivity(find_friendsIntent);
+                SendUserToFindFriendsActivity();
+
+                break;
+            case R.id.nav_message:
+
+                SendUserToMessageActivity();
                 break;
 
             case R.id.nav_logout:
@@ -458,6 +553,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         Toast.makeText(dashboard.this, "ok", Toast.LENGTH_SHORT).show();
+                        updateUserStatus("offline");
                         mAuth.signOut();
                         Login();
                     }
@@ -488,6 +584,8 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         Toast.makeText(dashboard.this, "ok", Toast.LENGTH_SHORT).show();
+                        updateUserStatus("offline");
+                        mAuth.signOut();
                         Login();
                     }
                 });
@@ -510,15 +608,42 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
                 break;
 
 
-
-
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
     }
+    private void SendUserToSettingsActivity()
+    {
+        Intent settingIntent = new Intent(dashboard.this,SettingsActivity.class);
+        startActivity(settingIntent);
+    }
 
+    private void SendUserToFindFriendsActivity()
+    {
+        Intent find_friendsIntent = new Intent(dashboard.this,Find_friendsActivity.class);
+        startActivity(find_friendsIntent);
+    }
+
+    private void SendUserToMessageActivity()
+    {
+        Intent chatIntent = new Intent(dashboard.this,FriendsActivity.class);
+        startActivity(chatIntent);
+    }
+
+    private void SendUsersToFriendsActivity()
+    {
+        Intent friendsIntent = new Intent(dashboard.this,FriendsActivity.class);
+        startActivity(friendsIntent);
+    }
+
+    private void SendUserToProfileActivity()
+    {
+        Intent profileIntent = new Intent(dashboard.this,ProfileActivity.class);
+        startActivity(profileIntent);
+
+    }
 
     public void onOptionsItemselected (Menu menu) {
         super.onOptionsMenuClosed(menu);
@@ -527,8 +652,5 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
     public void Login () {
         startActivity(new Intent(this, Login.class));
     }
-
-
-
 
 }

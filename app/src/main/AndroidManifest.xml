@@ -23,17 +23,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Reset_passwordActivity"
-            android:parentActivityName=".Login" ></activity>
-        <activity android:name=".Find_friendsActivity"
+        <activity android:name=".MyPostsActivity"
             android:parentActivityName=".dashboard"></activity>
+        <activity android:name=".ChatActivity"
+            android:parentActivityName=".FriendsActivity"/>
+        <activity android:name=".FriendsActivity" />
+        <activity android:name=".PersonProfileActivity" />
+        <activity android:name=".CommentsActivity" />
+        <activity
+            android:name=".Reset_passwordActivity"
+            android:parentActivityName=".Login" />
+        <activity
+            android:name=".Find_friendsActivity"
+            android:parentActivityName=".dashboard" />
         <activity android:name=".ProfileActivity" />
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".dashboard" />
         <activity android:name=".ClickPostActivity" />
         <activity android:name=".Post" />
-        <activity android:name=".Chats" />
+        <activity
+            android:name=".Chats"
+            android:parentActivityName=".dashboard" />
         <activity android:name=".SetupActivity" />
         <activity android:name=".dashboard" />
         <activity android:name="com.example.x25.uwezo.dashboard" />

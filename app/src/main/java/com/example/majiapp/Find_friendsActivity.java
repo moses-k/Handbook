@@ -1,5 +1,6 @@
 package com.example.majiapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -82,11 +83,23 @@ public class Find_friendsActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<FindFriends,FindFiendsViewHolder> firebaseRecyclerAdapter
                 = new FirebaseRecyclerAdapter <FindFriends, FindFiendsViewHolder>(list){
             @Override
-            protected void onBindViewHolder(@NonNull FindFiendsViewHolder holder, int position, @NonNull FindFriends model)
+            protected void onBindViewHolder(@NonNull FindFiendsViewHolder holder, final int position, @NonNull FindFriends model)
             {
                 holder.setFullname(model.getFullname());
                holder.setStatus(model.getStatus());
                holder.setProfileimage(model.getProfileimage());
+
+               //create oncline listener
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String visit_user_id = getRef(position).getKey();
+                        Intent profileIntent = new Intent(Find_friendsActivity.this, PersonProfileActivity.class);
+                        profileIntent.putExtra("visitUserId",visit_user_id);
+                        startActivity(profileIntent);
+                    }
+                });
 
             }
 

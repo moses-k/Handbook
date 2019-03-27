@@ -26,13 +26,18 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Timer;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    EditText email, editTextPassword;
+    EditText email ;
+
     TextView Forget_password_link;
     ProgressBar mprogressBar;
     ProgressDialog loadingBar;
@@ -45,6 +50,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference UserRef;
+    android.support.design.widget.TextInputEditText editTextPassword;
+    private boolean emailAddressChecker;
 
 //    implementation 'de.hdoenhof:circleimageview:2.2.0'
 
@@ -56,8 +63,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
        FirebaseApp.initializeApp(this);
 
         mAuth =  FirebaseAuth.getInstance();
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
         email = (EditText) findViewById(R.id.etEmail);
-        editTextPassword = (EditText) findViewById(R.id.etPassword);
+        editTextPassword = (android.support.design.widget.TextInputEditText) findViewById(R.id.etPassword);
         Forget_password_link = (TextView) findViewById(R.id.forget);
         loadingBar = new ProgressDialog(this);
 
@@ -113,26 +121,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 startActivity(new Intent(this, Reset_passwordActivity.class));
                 break;
 
-
-
         }
 
     }
 
-    private void SendUserTodashboard() {
-        startActivity(new Intent(this, dashboard.class));
-
-
-    }
 
 
 
     public void Login(View view) {
         if (!isConnected(Login.this)) buildDialog(Login.this).show();
         else {
-            // Toast.makeText( Login.this, "Welcome user", Toast.LENGTH_SHORT ).show();
-            // setContentView( R.layout.activity_main )
-
 
             String username = email.getText().toString();
             String password = editTextPassword.getText().toString();
@@ -181,9 +179,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         {
                            if (task.isSuccessful())
                           {
-                            SendUserTodashboard();
-                            Toast.makeText(getApplicationContext(),"User Login successfull",Toast.LENGTH_SHORT).show();
-                            loadingBar.dismiss();
+                             sendUserToDashboard();
+                           //  checkUserExistence();
+                             //VerifyEmailAddress();
+                              loadingBar.dismiss();
 
                            }else
 
@@ -197,6 +196,62 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     });
 
         }
+    }
+
+    //email verification
+    private void VerifyEmailAddress()
+    {
+        FirebaseUser user = mAuth.getCurrentUser();
+        emailAddressChecker = user.isEmailVerified();
+
+        if(emailAddressChecker)
+        {
+
+           //sendUserToDashboard();
+           // checkUserExistence();
+
+        }
+        else
+        {
+            Toast.makeText(this,"Please verify your Account first",Toast.LENGTH_SHORT).show();
+            mAuth.signOut();
+
+
+        }
+    }
+
+
+    //check user existance in the realtime dbase
+    private void checkUserExistence()
+    {
+        final  String current_user_id = mAuth.getCurrentUser().getUid();
+
+        UserRef.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot)
+            {
+                if(!dataSnapshot.hasChild(current_user_id))
+                {
+                    sendUserToSetupActivity();
+                }
+                else
+                {
+                  //  sendUserToDashboard();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+                Toast.makeText(getApplicationContext(),"Database........... Error ocured",Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
     }
 
 
@@ -241,6 +296,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         return builder;
 
     }
+
+
 
 
 }

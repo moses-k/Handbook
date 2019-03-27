@@ -94,16 +94,21 @@ public class SettingsActivity extends AppCompatActivity {
             {
                 if(dataSnapshot.exists())
                 {
+
+                    if(dataSnapshot.hasChild("profileimage"))
+                    {
+                        String myProfileImage  = dataSnapshot.child("profileimage").getValue().toString();
+                        //load image stored in the string to the profile image and set data to the one i the database
+                        Picasso.get().load(myProfileImage).placeholder(R.drawable.profile_pic).into(UserProfImage);
+                    }
                     //get data from the firebase and store into the strings
-                    String mystatus  = dataSnapshot.child("Status").getValue().toString();
-                    String myProfileImage  = dataSnapshot.child("profileimage").getValue().toString();
+                    String mystatus  = dataSnapshot.child("status").getValue().toString();
                     String myusername = dataSnapshot.child("Username").getValue().toString();
-                    String myfullname = dataSnapshot.child("Fullname").getValue().toString();
+                    String myfullname = dataSnapshot.child("fullname").getValue().toString();
                     String myPhonenumber = dataSnapshot.child("Phone Number").getValue().toString();
                     String myResidence= dataSnapshot.child("Residence").getValue().toString();
 
-                    //load image stored in the string to the profile image and set data to the one i the database
-                    Picasso.get().load(myProfileImage).placeholder(R.drawable.profile_pic).into(UserProfImage);
+
 
                     //display data
                     userStatus.setText(mystatus);
