@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/all_users_profile_image"
-        android:layout_width="85dp"
-        android:layout_height="85dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_margin="10dp"
         android:src="@drawable/profile_image"/>
     
@@ -29,7 +29,7 @@
                android:layout_height="wrap_content"
                android:text="user Fullname"
                android:textAlignment="textStart"
-               android:textSize="18sp"
+               android:textSize="15sp"
                android:textStyle="bold"
                android:textColor="@color/backgroundcolor"/>
            <ImageView
@@ -47,7 +47,7 @@
            android:layout_height="wrap_content"
            android:text="Status"
            android:textAlignment="textStart"
-           android:textSize="16sp"
+           android:textSize="14sp"
            android:textColor="@color/backgroundcolor"/>
 
    </LinearLayout>

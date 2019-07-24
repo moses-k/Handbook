@@ -36,7 +36,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter. Messa
     public class MessagesVieholder extends RecyclerView.ViewHolder
 
     {
-        public TextView SenderMessageText, receiverMessageText;
+        public TextView SenderMessageText, receiverMessageText,receivermessagetime,sendermessagetime;
         public CircleImageView receiverProfileimge;
 
         public MessagesVieholder(View itemView) {
@@ -45,6 +45,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter. Messa
             SenderMessageText = (TextView) itemView.findViewById(R.id.sender_message_text);
             receiverMessageText =(TextView) itemView.findViewById(R.id.receiver_message_text);
             receiverProfileimge = (CircleImageView) itemView.findViewById(R.id.message_profile_image);
+            receivermessagetime = (TextView) itemView.findViewById(R.id.receivertime);
+            sendermessagetime = (TextView) itemView.findViewById(R.id.sendertime);
+
 
         }
     }
@@ -96,6 +99,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter. Messa
         {
             holder.receiverMessageText.setVisibility(View.INVISIBLE);
             holder.receiverProfileimge.setVisibility(View.INVISIBLE);
+            holder.receivermessagetime.setVisibility(View.INVISIBLE);
+
+
 
             if(fromUserID.equals(messageSenderID))
             {
@@ -104,17 +110,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter. Messa
                 holder.SenderMessageText.setTextColor(Color.WHITE);
                 holder.SenderMessageText.setGravity(Gravity.LEFT);
                 holder.SenderMessageText.setText(messages.getMessage());
+                holder.sendermessagetime.setText(messages.getTime());
             }
             else
             {
                 holder.SenderMessageText.setVisibility(View.INVISIBLE);
                 holder.receiverMessageText.setVisibility(View.VISIBLE);
                 holder.receiverProfileimge.setVisibility(View.VISIBLE);
+                holder.receivermessagetime.setVisibility(View.VISIBLE);
 
                 holder.receiverMessageText.setBackgroundResource(R.drawable.receiver_message_textbackdround);
                 holder.receiverMessageText.setTextColor(Color.WHITE);
                 holder.receiverMessageText.setGravity(Gravity.LEFT);
                 holder.receiverMessageText.setText(messages.getMessage());
+                holder.receivermessagetime.setText(messages.getTime());
 
 
             }

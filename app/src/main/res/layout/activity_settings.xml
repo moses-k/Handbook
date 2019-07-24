@@ -28,8 +28,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/settings_profile_image"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/profile_pic" />
@@ -46,7 +46,7 @@
                     android:hint="Profile status"
                     android:padding="30dp"
                     android:textColor="@color/cardview_dark_background"
-                    android:textSize="20sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -61,7 +61,7 @@
                     android:hint="Username"
                     android:padding="12dp"
                     android:textColor="@color/cardview_dark_background"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -76,7 +76,7 @@
                     android:hint="Fullname"
                     android:padding="12dp"
                     android:textColor="@color/cardview_dark_background"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -91,7 +91,7 @@
                     android:hint="Phone number"
                     android:padding="12dp"
                     android:textColor="@color/cardview_dark_background"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -106,7 +106,7 @@
                     android:hint="Residence"
                     android:padding="12dp"
                     android:textColor="@color/cardview_dark_background"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <Button
@@ -117,7 +117,7 @@
                     android:layout_marginTop="30dp"
                     android:background="@drawable/background_button"
                     android:text="Update account settings"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </ScrollView>

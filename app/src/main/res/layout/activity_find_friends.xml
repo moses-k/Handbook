@@ -23,7 +23,7 @@
                 android:id="@+id/search_friends_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
                 android:textStyle="bold"
@@ -35,20 +35,21 @@
             <EditText
                 android:id="@+id/search_here_input"
                 android:layout_below="@+id/search_friends_description"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
+                android:layout_width="250sp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:padding="5dp"
-                android:hint="Search hera.."
+                android:hint="Search here"
                 android:inputType="textMultiLine"
                 android:background="@drawable/backgroundwhite"/>
 
             <ImageView
                 android:id="@+id/search_icon"
                 android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="20sp"
+                android:layout_alignParentEnd="true"
                 android:layout_below="@id/search_friends_description"
-                android:layout_toEndOf="@+id/search_here_input"
                 android:background="@drawable/backgroundwhite"
                 android:src="@drawable/ic_youtube_searched_for_black_24dp" />
 

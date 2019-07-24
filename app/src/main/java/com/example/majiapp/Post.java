@@ -244,9 +244,11 @@ public class Post extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                                sendUserToHomeActivity();
                                 Toast.makeText(Post.this,"New post is updated successfully",Toast.LENGTH_SHORT).show();
                                 loadingBar.dismiss();
+                                //sendUserToHomeActivity();
+
+
 
                             }else
                             {

@@ -52,7 +52,7 @@ public class ChatActivity extends AppCompatActivity
 
     String messageReceiverID,messageReceiverName, messageSenderId, saveCurrentDate,saveCurrentTime;
 
-    private TextView receiverName, userLastSeen;
+    private TextView receiverName, userLastSeen, sendermessagetime,receivermessagetime;
     private CircleImageView receiverProfileImage;
 
 
@@ -79,17 +79,20 @@ public class ChatActivity extends AppCompatActivity
         InitialiseFields();
 
         DispalyReceiverInfo();
+        showonlinestatus();
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+
                 SendMessage();
 
             }
         });
 
         FetchMessages();
+
 
 
     }
@@ -154,6 +157,7 @@ public class ChatActivity extends AppCompatActivity
         super.onStop();
         updateUserStatus("offline");
 
+
     }
     //if app crashes
     @Override
@@ -162,6 +166,7 @@ public class ChatActivity extends AppCompatActivity
         super.onDestroy();
         updateUserStatus("offline");
 
+
     }
 
     @Override
@@ -169,13 +174,15 @@ public class ChatActivity extends AppCompatActivity
         super.onResume();
         updateUserStatus("online");
 
+
     }
     private void SendMessage()
     {
-
         updateUserStatus("online ");
-        String messageText = UserMessageInput.getText().toString();
+        showonlinestatus();
 
+
+        String messageText = UserMessageInput.getText().toString();
         if(TextUtils.isEmpty(messageText))
         {
             Toast.makeText(this, "Please write a message...",Toast.LENGTH_SHORT).show();
@@ -194,7 +201,7 @@ public class ChatActivity extends AppCompatActivity
             saveCurrentDate = currentDate.format(calFordDate.getTime());
 
             Calendar calFordTime = Calendar.getInstance();
-            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm aa");
+            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm ");
             saveCurrentTime = currentTime.format(calFordTime.getTime());
 
 
@@ -221,12 +228,15 @@ public class ChatActivity extends AppCompatActivity
                         //whenever A TEXT is send it should empty the text box
                         UserMessageInput.setText("");
 
+
+
                     }
                     else
                     {
                         String message = task.getException().getMessage();
                         Toast.makeText(ChatActivity.this,"Error" + message,Toast.LENGTH_SHORT).show();
                         UserMessageInput.setText("");
+
 
 
                     }
@@ -272,24 +282,6 @@ public class ChatActivity extends AppCompatActivity
                     final  String profileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(profileImage).placeholder(R.drawable.profile_image).into(receiverProfileImage);
 
-
-                    // show online status on chats
-                    if(dataSnapshot.hasChild("userState"))
-                    {
-                        final String type = dataSnapshot.child("userState").child("type").getValue().toString();
-                        final String lastDate = dataSnapshot.child("userState").child("date").getValue().toString();
-
-                        final String lastTime = dataSnapshot.child("userState").child("time").getValue().toString();
-
-                        if (type.equals("online")) {
-                            userLastSeen.setText("online");
-
-                        } else {
-                            userLastSeen.setText("last seen :" + lastDate + "  " + lastTime);
-                        }
-                    }
-
-
                 }
 
             }
@@ -302,6 +294,38 @@ public class ChatActivity extends AppCompatActivity
         });
 
     }
+    private void showonlinestatus() {
+
+        rootRef.child("Users").child(messageReceiverID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // show online status on chats
+                if (dataSnapshot.hasChild("userState")) {
+                    final String type = dataSnapshot.child("userState").child("type").getValue().toString();
+                    final String lastDate = dataSnapshot.child("userState").child("date").getValue().toString();
+
+                    final String lastTime = dataSnapshot.child("userState").child("time").getValue().toString();
+
+                    if (type.equals("online")) {
+                        userLastSeen.setText("online");
+
+                    } else if(type.equals("offline")) {
+                        userLastSeen.setText("last seen :" + lastDate + "  " + lastTime);
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
 
     private void InitialiseFields()
     {
@@ -321,10 +345,11 @@ public class ChatActivity extends AppCompatActivity
         receiverName =  (TextView) findViewById(R.id.custom_profile_name);
         receiverProfileImage = (CircleImageView) findViewById(R.id.custom_profile_image);
         userLastSeen = (TextView) findViewById(R.id.custom_user_last_seen);
-
-
         SendMessageButton = (ImageButton) findViewById(R.id.chat_send_message_button);
         UserMessageInput = (EditText) findViewById(R.id.chat_input_message);
+        sendermessagetime = (TextView) findViewById(R.id.sendertime);
+        receivermessagetime = (TextView) findViewById(R.id.receivertime);
+
 
 
         messageAdapter = new MessagesAdapter(messagesList);

@@ -61,7 +61,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
     private DatabaseReference UserRef, postsRef,LikesRef;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private CircleImageView NavProfileImage;
-   public String currentUserID;
+    public String currentUserID;
     private View navView;
     private Boolean LikeCheker = false;
 
@@ -89,28 +89,32 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
 
        //  View navView = navigationView.inflateHeaderView(R.layout.header);
        //  navView.findViewById(R.id.naigation_view);
-       //app:headerLayout="@layout/header"
 
         mToolbar = (Toolbar) findViewById(R.id.nav_actionbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
+
+        navigationView = findViewById(R.id.nav_view);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        //display the supportActionBar
+
+      //enable mToogle icon visibility
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        navigationView = findViewById(R.id.nav_view);
         //inflate the layout
         navView = navigationView.inflateHeaderView(R.layout.header);
         NavProfileImage = (CircleImageView) navView.findViewById(R.id.nav_profile_image);
         navusername = (TextView) navView.findViewById(R.id.nav_username);
 
-        //add onclick listener
+
         navigationView.setNavigationItemSelectedListener(this);
+
+        //add onclick listener
+        //navigationView.setNavigationItemSelectedListener(this);
         DisplAllUsersPost();
 
         //Load home fragment on the empty containeri dashboaed
@@ -194,10 +198,6 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
 
     }
 
-
-
-
-
     //check user existance in the realtime dbase
     private void checkUserExistence()
     {
@@ -253,7 +253,6 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
     //display all posts
     private void DisplAllUsersPost()
     {
-        //updateUserStatus("online");
 
         Query SortPostsInDecendingOrder = postsRef.orderByChild("counter");
 
@@ -510,7 +509,7 @@ public class dashboard extends AppCompatActivity implements NavigationView.OnNav
         return builder;
     }
 
-    //drwer item selected
+    //drawer item selected
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
 

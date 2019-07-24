@@ -1,11 +1,17 @@
   package com.example.majiapp;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -119,8 +125,30 @@ import de.hdodenhof.circleimageview.CircleImageView;
                     }
                     if(CURRENT_STATE.equals("friends"))
                     {
+                        AlertDialog.Builder ab = new AlertDialog.Builder(PersonProfileActivity.this);
 
-                        UnfriendExistingFriend();
+                        ab.setTitle("confirm");
+                        ab.setIcon(R.drawable.ic_launch_black_24dp);
+                        ab.setMessage("Are you sure you want to unfriend this person");
+
+                        ab.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                Toast.makeText(PersonProfileActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                UnfriendExistingFriend();
+
+
+                            }
+                        });
+
+                        ab.setNegativeButton("cancle", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                Toast.makeText(PersonProfileActivity.this, "cancle", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        ab.show();
+
                     }
                 }
             });
@@ -274,6 +302,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                                                 SendFriendReqbutton.setEnabled(true);
                                                 CURRENT_STATE = "not_friends";
                                                 SendFriendReqbutton.setText("Send Friend Request");
+                                                SendFriendReqbutton.setTextColor(Color.WHITE);
 
                                                 DeclineFriendReqbutton.setVisibility(View.INVISIBLE);
                                                 DeclineFriendReqbutton.setEnabled(false);
@@ -308,6 +337,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                             {
                                 CURRENT_STATE = "request_sent";
                                 SendFriendReqbutton.setText("Cancel Friend Request");
+                                SendFriendReqbutton.setTextColor(Color.RED);
 
                                 DeclineFriendReqbutton.setVisibility(View.INVISIBLE);
                                 DeclineFriendReqbutton.setEnabled(false);
@@ -317,6 +347,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                                 CURRENT_STATE = "request_received";
                                 SendFriendReqbutton.setText("Accept Friend Request");
                                 DeclineFriendReqbutton.setVisibility(View.VISIBLE);
+
                                 DeclineFriendReqbutton.setEnabled(true);
 
                                 DeclineFriendReqbutton.setOnClickListener(new View.OnClickListener()
@@ -346,6 +377,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
                                                 CURRENT_STATE = "friends";
                                                 SendFriendReqbutton.setText("Unfriend this Person");
+                                                SendFriendReqbutton.setTextColor(Color.RED);
 
                                                 DeclineFriendReqbutton.setVisibility(View.INVISIBLE);
                                                 DeclineFriendReqbutton.setEnabled(false);
@@ -400,6 +432,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                                                 SendFriendReqbutton.setEnabled(true);
                                                 CURRENT_STATE = "request_sent";
                                                 SendFriendReqbutton.setText("Cancel Friend Request");
+                                                SendFriendReqbutton.setTextColor(Color.RED);
 
                                                 DeclineFriendReqbutton.setVisibility(View.INVISIBLE);
                                                 DeclineFriendReqbutton.setEnabled(false);

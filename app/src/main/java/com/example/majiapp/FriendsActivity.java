@@ -132,21 +132,7 @@ public class FriendsActivity extends AppCompatActivity
                             final String userName = dataSnapshot.child("fullname").getValue().toString();
                             final String profileImage = dataSnapshot.child("profileimage").getValue().toString();
 
-                            //show online icon in friends list
-                            final String type;
-                            if(dataSnapshot.hasChild("userState"))
-                            {
-                                type = dataSnapshot.child("userState").child("type").getValue().toString();
 
-                                if(type.equals("online"))
-                                {
-                                    holder.onlineStatusView.setVisibility(View.VISIBLE);
-                                }
-                                else
-                                {
-                                    holder.onlineStatusView.setVisibility(View.INVISIBLE);
-                                }
-                            }
 
 
                             holder.setFullname(userName);

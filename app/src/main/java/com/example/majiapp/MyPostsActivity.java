@@ -68,11 +68,6 @@ public class MyPostsActivity extends AppCompatActivity
         linearLayoutManager.setStackFromEnd(true);
         MyPostList.setLayoutManager(linearLayoutManager);
 
-
-
-
-
-
         DisplayMyAllPosts();
 
     }
